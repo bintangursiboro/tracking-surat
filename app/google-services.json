@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "185704420895",
+    "firebase_url": "https://tracking-surat.firebaseio.com",
+    "project_id": "tracking-surat",
+    "storage_bucket": "tracking-surat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:185704420895:android:f163f096e1a98df4",
+        "android_client_info": {
+          "package_name": "com.example.trackingsurat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "185704420895-s1arvrc0es0skfraob1cjrqclcdup9ir.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqA_Obu9x_FIDyVZiyk4jNXesFLpPh6qA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

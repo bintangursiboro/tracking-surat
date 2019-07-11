@@ -1,0 +1,45 @@
+mapan_credential:
+  context: mobile
+  token: 'MmE0MDE4N2QtOWE5NS0zMWNmLTQxNGMtNzI4OTJjZGJmNmI4LHMuNk5SMUhUYnNmUGxJT09uSFhZMkxieFV1'
+
+build:
+  command: ./gradlew assemble
+  artifacts:
+    apk_debug: '*/app-debug.apk'
+    apk_release: '*/app-release*.apk'
+    apk_internal: '*/app-internal*.apk'
+    apk_staging: '*/app-staging*.apk'
+
+publish:
+  gcs:
+    sa_creds: '{{ SA_TEAM_MOBILE }}'
+    bucket: pub.mapan.io
+    project: mapan-core-infra
+    uploads:
+      debug_link:
+        src: '{{ apk_debug }}'
+        dst: 'testgocd/{{ apk_debug }}'
+      release_link:
+        src: '{{ apk_release }}'
+        dst: 'testgocd/{{ apk_release }}'
+      internal_link:
+        src: '{{ apk_internal }}'
+        dst: 'testgocd/{{ apk_internal }}'
+      staging_link:
+        src: '{{ apk_staging }}'
+        dst: 'testgocd/{{ apk_staging }}'
+
+# notification:
+#   slack:
+#     webhook: '{{ WEBHOOK_URL }}'
+#   email:
+#     from: gocd-admin@ruma.co.id
+#     recipients: 
+#     - team-mobile@ruma.co.id
+#     subject: Update APK mobile
+#     message: |
+#       Download links 
+#       {{ debug_link }}
+#       {{ release_link }}
+#       {{ internal_link }}
+#       {{ staging_link }}

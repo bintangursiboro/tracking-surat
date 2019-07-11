@@ -1,0 +1,89 @@
+format_version: 4
+pipelines:
+  testgocd:
+    group: Mobile-Team
+    materials:
+      mygit:
+        git: https://github.com/bintangursiboro/tracking-surat.git
+    environment_variables:
+      CICD_CONFIG: cicd.config.yaml
+    stages:
+      - build:
+          jobs:
+            build:
+              artifacts:
+              - build:
+                  source: app/build
+                  destination: ./
+              - build:
+                  source: on.cicd.config.yaml
+                  destination: cicd
+              tasks:
+              - plugin:
+                  configuration:
+                    id: docker-exec-plugin
+                    version: '1'
+                  options:
+                    IMAGE: hub.gitlab.mapan.io/pub/docker/android-sdk:latest
+                    COMMAND: /cicd/apk_build
+                  run_if: any
+              - plugin:
+                  configuration:
+                    id: docker-exec-plugin
+                    version: '1'
+                  options:
+                    IMAGE: hub.gitlab.mapan.io/pub/docker/cicd:latest
+                    COMMAND: /cicd/with_env_vars
+                    ARGUMENTS: /cicd/slack_failed_build
+                  run_if: failed
+              - plugin:
+                  configuration:
+                    id: docker-exec-plugin
+                    version: '1'
+                  options:
+                    IMAGE: hub.gitlab.mapan.io/pub/docker/cicd:latest
+                    COMMAND: /cicd/with_env_vars
+                    ARGUMENTS: /cicd/slack_passed_build
+                  run_if: passed
+      - publish:
+          jobs:
+            publish:
+              tasks:
+              - fetch:
+                  stage: build
+                  job: build
+                  source: build
+                  destination: app
+              - fetch:
+                  stage: build
+                  job: build
+                  is_file: yes
+                  source: cicd/on.cicd.config.yaml
+                  destination: ./
+              - plugin:
+                  configuration:
+                    id: docker-exec-plugin
+                    version: '1'
+                  options:
+                    IMAGE: hub.gitlab.mapan.io/pub/docker/gcloud:latest
+                    COMMAND: /cicd/with_env_vars
+                    ARGUMENTS: /cicd/gcs_publish
+                  run_if: any
+              - plugin:
+                  configuration:
+                    id: docker-exec-plugin
+                    version: '1'
+                  options:
+                    IMAGE: hub.gitlab.mapan.io/pub/docker/cicd:latest
+                    COMMAND: /cicd/with_env_vars
+                    ARGUMENTS: /cicd/slack_failed_publish
+                  run_if: failed
+              - plugin:
+                  configuration:
+                    id: docker-exec-plugin
+                    version: '1'
+                  options:
+                    IMAGE: hub.gitlab.mapan.io/pub/docker/cicd:latest
+                    COMMAND: /cicd/with_env_vars
+                    ARGUMENTS: /cicd/email_success_publish
+                  run_if: passed
